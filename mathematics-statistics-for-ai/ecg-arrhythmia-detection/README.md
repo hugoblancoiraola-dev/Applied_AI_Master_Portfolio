@@ -6,6 +6,10 @@ The project explores how machine learning techniques can be applied to biomedica
 
 ---
 
+### 🔗 Project Resources
+
+[📓 View Notebook](./notebooks/ecg_arrhythmia_detection.ipynb) · [📄 Technical Report](./report/ecg_arrhythmia_analysis.pdf)
+
 ## 🎯 Project Overview
 
 The objective is to analyze individual ECG heartbeats and build machine learning models capable of identifying abnormal cardiac patterns.
