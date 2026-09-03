@@ -31,6 +31,20 @@ The project combines statistical analysis, dimensionality reduction and supervis
 
 ➡️ [Explore the project](./mathematics-statistics-for-ai/ecg-arrhythmia-detection/)
 
+
+### 💳 Credit Default Prediction & Explainable AI
+
+End-to-end machine learning pipeline for predicting **credit card default risk** using a dataset of 30,000 customers.
+
+The project covers exploratory data analysis, imbalanced classification, model comparison and **Explainable AI with SHAP**, providing both global and individual explanations of model predictions.
+
+Three classification algorithms were evaluated: Logistic Regression, Random Forest and Gradient Boosting. **Gradient Boosting achieved the best performance with a ROC-AUC of 0.7790 and an F1-score of 0.47 for the default class.**
+
+SHAP analysis identified recent payment behavior and credit-related variables as the main drivers of predicted default risk.
+
+**Technologies:** Python · Pandas · NumPy · Scikit-learn · SHAP · Matplotlib · Seaborn
+
+➡️ [View Project →](./model-evaluation-explainability/credit-default-xai/)
 ---
 
 ## 📚 Projects by Area
@@ -43,7 +57,11 @@ Statistical foundations and mathematical techniques applied to Artificial Intell
 | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | [ECG Arrhythmia Detection](./mathematics-statistics-for-ai/ecg-arrhythmia-detection/) | EDA · PCA · Classification · Model Evaluation · Bayesian Inference |
 
-*More projects will be added progressively.*
+### Model Evaluation & Explainability
+
+| Project | Main Topics |
+|---|---|
+| [Credit Default Prediction & Explainable AI](./model-evaluation-explainability/credit-default-xai/) | Classification, Imbalanced Data, ROC-AUC, F1-score, Gradient Boosting, SHAP, Explainable AI |
 
 ---
 
@@ -105,7 +123,11 @@ Applied_AI_Master_Portfolio/
 │       └── report/
 │           └── ecg_arrhythmia_analysis.pdf
 │
-└── ...
+├── model-evaluation-explainability/
+│   └── credit-default-xai/
+│       ├── README.md
+│       ├── notebooks/
+│       └── report/
 ```
 
 Each project contains its own documentation explaining the **problem, methodology, models, results and conclusions**, together with the corresponding implementation and, when available, the original technical report.
@@ -122,7 +144,11 @@ The repository has been reorganized and documented as a technical portfolio, pre
 
 ## 📌 Portfolio Status
 
-This repository is currently being expanded with additional projects in:
+This portfolio is being progressively expanded with selected projects from the Master's Degree.
 
-**Machine Learning · Deep Learning · NLP · Computer Vision · Explainable AI · Clustering · Time Series**
+**Projects currently available:**
+
+- ✅ ECG Arrhythmia Detection with Machine Learning
+- ✅ Credit Default Prediction & Explainable AI
+
 
