@@ -81,6 +81,18 @@ The two models illustrate an important business trade-off: kNN identifies more r
 
 ➡️ [Explore the project](./classification-clustering/employee-attrition-classification/)
 
+### 🌍 Country Development Clustering for Humanitarian Aid
+
+Unsupervised learning project for grouping **167 countries** according to socioeconomic, trade and health indicators to support humanitarian aid prioritization.
+
+The analysis builds three interpretable composite dimensions — **Health, Trade and Finance** — and applies standardized **K-Means clustering**. The final four-cluster solution is evaluated using Silhouette, Calinski-Harabasz and Davies-Bouldin metrics, with PCA used for visualization.
+
+A cluster-profiling step then ranks humanitarian priority from observed income and child-mortality characteristics rather than interpreting arbitrary K-Means labels directly.
+
+**Technologies:** `Python` · `Pandas` · `NumPy` · `Scikit-learn` · `Matplotlib` · `Seaborn` · `Plotly`
+
+➡️ [Explore the project](./classification-clustering/country-aid-clustering/)
+
 ---
 
 ## 📚 Projects by Area
@@ -116,6 +128,7 @@ Statistical foundations and mathematical techniques applied to Artificial Intell
 | Project | Main Topics |
 |---|---|
 | [Employee Attrition Prediction with kNN and SVM](./classification-clustering/employee-attrition-classification/) | Feature Engineering · SMOTE · kNN · SVM · Cross-Validation · Sensitivity · Specificity · People Analytics |
+| [Country Development Clustering for Humanitarian Aid](./classification-clustering/country-aid-clustering/) | Unsupervised Learning · K-Means · Feature Engineering · Cluster Evaluation · PCA · Humanitarian Analytics |
 
 ---
 
@@ -126,6 +139,7 @@ Throughout the portfolio, the projects cover topics including:
 * Machine Learning
 * Statistical Analysis
 * Classification & Clustering
+* Unsupervised Learning
 * Dimensionality Reduction
 * Deep Learning
 * Neural Networks
@@ -160,7 +174,7 @@ Throughout the portfolio, the projects cover topics including:
 
 **Visualization & Explainability**
 
-`Matplotlib` · `Seaborn` · `SHAP`
+`Matplotlib` · `Seaborn` · `Plotly` · `SHAP`
 
 **Development**
 
@@ -204,10 +218,15 @@ Applied_AI_Master_Portfolio/
 │           └── nlp_text_analysis.ipynb
 │
 └── classification-clustering/
-    └── employee-attrition-classification/
+    ├── employee-attrition-classification/
+    │   ├── README.md
+    │   └── analysis/
+    │       └── employee_attrition_classification.qmd
+    │
+    └── country-aid-clustering/
         ├── README.md
-        └── analysis/
-            └── employee_attrition_classification.qmd
+        └── notebooks/
+            └── country_aid_clustering.ipynb
 ```
 
 Each project contains its own documentation explaining the **problem, methodology, models, results and conclusions**, together with the corresponding implementation and, when available, the original technical report.
@@ -233,5 +252,6 @@ This portfolio is being progressively expanded with selected projects from the M
 - ✅ Deep Learning with Keras: LSTM & CNN
 - ✅ NLP Text Analysis Pipeline
 - ✅ Employee Attrition Prediction with kNN and SVM
+- ✅ Country Development Clustering for Humanitarian Aid
 
-Additional projects covering clustering, advanced Computer Vision and other AI areas will be added progressively.
+Additional projects covering advanced Computer Vision and other AI areas will be added progressively.
