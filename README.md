@@ -69,6 +69,18 @@ The notebook also documents important limitations, including the use of only the
 
 ➡️ [Explore the project](./natural-language-processing/text-analysis-pipeline/)
 
+### 👥 Employee Attrition Prediction with kNN and SVM
+
+People Analytics classification project for predicting **employee attrition** from 30 employee-related variables using the `tidymodels` ecosystem in R.
+
+The project combines exploratory analysis, feature engineering, stratified splitting, SMOTE class balancing, **kNN hyperparameter tuning with 10-fold cross-validation** and a non-linear polynomial SVM.
+
+The two models illustrate an important business trade-off: kNN identifies more real attrition cases, while SVM achieves substantially higher overall accuracy and specificity. The analysis therefore emphasizes sensitivity, specificity and the operational cost of false negatives rather than relying on accuracy alone.
+
+**Technologies:** `R` · `tidymodels` · `tidyverse` · `themis` · `kknn` · `kernlab` · `Quarto`
+
+➡️ [Explore the project](./classification-clustering/employee-attrition-classification/)
+
 ---
 
 ## 📚 Projects by Area
@@ -99,6 +111,12 @@ Statistical foundations and mathematical techniques applied to Artificial Intell
 |---|---|
 | [NLP Text Analysis Pipeline](./natural-language-processing/text-analysis-pipeline/) | Extractive Summarization · Sentiment Analysis · Machine Translation · Transformers · BERT · MarianMT |
 
+### 👥 Classification & Clustering
+
+| Project | Main Topics |
+|---|---|
+| [Employee Attrition Prediction with kNN and SVM](./classification-clustering/employee-attrition-classification/) | Feature Engineering · SMOTE · kNN · SVM · Cross-Validation · Sensitivity · Specificity · People Analytics |
+
 ---
 
 ## 🧠 Areas Covered
@@ -116,6 +134,8 @@ Throughout the portfolio, the projects cover topics including:
 * Time Series
 * Model Evaluation
 * Explainable AI (XAI)
+* Class Imbalance & Resampling
+* Feature Engineering
 * Data Governance & AI in Business
 
 ---
@@ -128,7 +148,7 @@ Throughout the portfolio, the projects cover topics including:
 
 **Data & Machine Learning**
 
-`Pandas` · `NumPy` · `Scikit-learn`
+`Pandas` · `NumPy` · `Scikit-learn` · `tidymodels` · `tidyverse` · `themis`
 
 **Deep Learning**
 
@@ -144,7 +164,7 @@ Throughout the portfolio, the projects cover topics including:
 
 **Development**
 
-`Jupyter Notebook` · `Google Colab` · `Git` · `GitHub`
+`Jupyter Notebook` · `Google Colab` · `Quarto` · `Git` · `GitHub`
 
 ---
 
@@ -177,11 +197,17 @@ Applied_AI_Master_Portfolio/
 │       └── notebooks/
 │           └── keras_lstm_cnn.ipynb
 │
-└── natural-language-processing/
-    └── text-analysis-pipeline/
+├── natural-language-processing/
+│   └── text-analysis-pipeline/
+│       ├── README.md
+│       └── notebooks/
+│           └── nlp_text_analysis.ipynb
+│
+└── classification-clustering/
+    └── employee-attrition-classification/
         ├── README.md
-        └── notebooks/
-            └── nlp_text_analysis.ipynb
+        └── analysis/
+            └── employee_attrition_classification.qmd
 ```
 
 Each project contains its own documentation explaining the **problem, methodology, models, results and conclusions**, together with the corresponding implementation and, when available, the original technical report.
@@ -206,5 +232,6 @@ This portfolio is being progressively expanded with selected projects from the M
 - ✅ Credit Default Prediction & Explainable AI
 - ✅ Deep Learning with Keras: LSTM & CNN
 - ✅ NLP Text Analysis Pipeline
+- ✅ Employee Attrition Prediction with kNN and SVM
 
 Additional projects covering clustering, advanced Computer Vision and other AI areas will be added progressively.
