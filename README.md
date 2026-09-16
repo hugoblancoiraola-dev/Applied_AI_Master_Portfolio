@@ -61,11 +61,11 @@ The final CNN achieves approximately **67.8% test accuracy**, while the LSTM dem
 
 Natural Language Processing pipeline for Spanish text combining **extractive summarization**, **sentiment analysis** and **Spanish-to-English machine translation**.
 
-The project combines a transparent frequency-based summarization method with pretrained Hugging Face Transformer models, including multilingual BERT for sentiment analysis and MarianMT for machine translation.
+The project combines a deterministic sentence-selection baseline with pretrained Hugging Face Transformer models: multilingual BERT for sentiment analysis and MarianMT for machine translation.
 
-It also discusses practical limitations such as sentiment-model domain mismatch, loss of nuance in document-level polarity and long-text segmentation for Transformer inference.
+The notebook also documents important limitations, including the use of only the first 512 characters for sentiment inference, mixed polarity in the source text and input-length constraints during Transformer processing.
 
-**Technologies:** `Python` · `Hugging Face Transformers` · `BERT` · `MarianMT` · `PyTorch` · `NumPy`
+**Technologies:** `Python` · `Hugging Face Transformers` · `BERT` · `MarianMT` · `PyTorch`
 
 ➡️ [Explore the project](./natural-language-processing/text-analysis-pipeline/)
 
