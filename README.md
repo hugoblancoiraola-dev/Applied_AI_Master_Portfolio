@@ -31,7 +31,6 @@ The project combines statistical analysis, dimensionality reduction and supervis
 
 ➡️ [Explore the project](./mathematics-statistics-for-ai/ecg-arrhythmia-detection/)
 
-
 ### 💳 Credit Default Prediction & Explainable AI
 
 End-to-end machine learning pipeline for predicting **credit card default risk** using a dataset of 30,000 customers.
@@ -42,9 +41,22 @@ Three classification algorithms were evaluated: Logistic Regression, Random Fore
 
 SHAP analysis identified recent payment behavior and credit-related variables as the main drivers of predicted default risk.
 
-**Technologies:** Python · Pandas · NumPy · Scikit-learn · SHAP · Matplotlib · Seaborn
+**Technologies:** `Python` · `Pandas` · `NumPy` · `Scikit-learn` · `SHAP` · `Matplotlib` · `Seaborn`
 
-➡️ [View Project →](./model-evaluation-explainability/credit-default-xai/)
+➡️ [Explore the project](./model-evaluation-explainability/credit-default-xai/)
+
+### 🧠 Deep Learning with Keras: LSTM & CNN
+
+Two complementary deep learning experiments demonstrating how neural network architectures can be adapted to different data structures.
+
+The first experiment uses an **LSTM network** for one-step-ahead forecasting on a synthetic time series. The second develops a **CNN for CIFAR-10 image classification**, incorporating data augmentation, Dropout, L2 regularization and Early Stopping.
+
+The final CNN achieves approximately **67.8% test accuracy**, while the LSTM demonstrates the complete sequence-preparation and forecasting workflow for temporal data.
+
+**Technologies:** `Python` · `TensorFlow` · `Keras` · `NumPy` · `Scikit-learn` · `Matplotlib`
+
+➡️ [Explore the project](./deep-learning/keras-neural-networks/)
+
 ---
 
 ## 📚 Projects by Area
@@ -53,15 +65,21 @@ SHAP analysis identified recent payment behavior and credit-related variables as
 
 Statistical foundations and mathematical techniques applied to Artificial Intelligence and Machine Learning problems.
 
-| Project                                                                               | Topics                                                             |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Project | Topics |
+|---|---|
 | [ECG Arrhythmia Detection](./mathematics-statistics-for-ai/ecg-arrhythmia-detection/) | EDA · PCA · Classification · Model Evaluation · Bayesian Inference |
 
-### Model Evaluation & Explainability
+### 🔍 Model Evaluation & Explainability
 
 | Project | Main Topics |
 |---|---|
-| [Credit Default Prediction & Explainable AI](./model-evaluation-explainability/credit-default-xai/) | Classification, Imbalanced Data, ROC-AUC, F1-score, Gradient Boosting, SHAP, Explainable AI |
+| [Credit Default Prediction & Explainable AI](./model-evaluation-explainability/credit-default-xai/) | Classification · Imbalanced Data · ROC-AUC · F1-score · Gradient Boosting · SHAP · Explainable AI |
+
+### 🧠 Deep Learning
+
+| Project | Main Topics |
+|---|---|
+| [Deep Learning with Keras: LSTM & CNN](./deep-learning/keras-neural-networks/) | LSTM · Time Series Forecasting · CNN · CIFAR-10 · Data Augmentation · Regularization |
 
 ---
 
@@ -127,7 +145,15 @@ Applied_AI_Master_Portfolio/
 │   └── credit-default-xai/
 │       ├── README.md
 │       ├── notebooks/
+│       │   └── credit_default_xai.ipynb
 │       └── report/
+│           └── credit_default_analysis.pdf
+│
+└── deep-learning/
+    └── keras-neural-networks/
+        ├── README.md
+        └── notebooks/
+            └── keras_lstm_cnn.ipynb
 ```
 
 Each project contains its own documentation explaining the **problem, methodology, models, results and conclusions**, together with the corresponding implementation and, when available, the original technical report.
@@ -150,5 +176,6 @@ This portfolio is being progressively expanded with selected projects from the M
 
 - ✅ ECG Arrhythmia Detection with Machine Learning
 - ✅ Credit Default Prediction & Explainable AI
+- ✅ Deep Learning with Keras: LSTM & CNN
 
-
+Additional projects covering NLP, Computer Vision, clustering and other AI areas will be added progressively.
