@@ -1,0 +1,381 @@
+---
+title: "Employee Attrition Prediction with kNN and SVM"
+author: "Hugo Blanco Iraola"
+date: today
+date-format: long
+execute:
+  echo: true
+  warning: false
+  error: false
+  eval: true
+  include: true
+format:
+  html:
+    self-contained: true
+    theme: default
+    lang: en-US
+---
+
+# Employee Attrition Prediction with kNN and SVM
+
+### Feature Engineering, Class Imbalance and Supervised Classification with tidymodels
+
+This project develops a complete supervised machine learning workflow for predicting **employee attrition** using the `attrition` dataset from the R package `modeldata`.
+
+The analysis focuses on a realistic People Analytics setting where the main objective is not only to maximize overall accuracy, but also to detect employees at risk of leaving the organization.
+
+The workflow includes:
+
+- Exploratory Data Analysis (EDA)
+- Data-quality checks
+- Stratified train/test splitting
+- Feature engineering with `recipes`
+- Class balancing with SMOTE
+- k-Nearest Neighbors (kNN) hyperparameter tuning
+- Polynomial Support Vector Machine (SVM)
+- Evaluation using accuracy, sensitivity and specificity
+- Model comparison from a business-oriented perspective
+
+## 1. Dataset and Problem Definition
+
+The dataset describes employee attrition and was originally provided by IBM Watson Analytics Lab. It is available directly through the `modeldata` package in R.
+
+- **Objective:** predict whether an employee will leave the company.
+- **Problem type:** supervised binary classification.
+- **Target variable:** `Attrition` (`Yes` / `No`).
+- **Predictors:** 30 employee-related variables.
+- **Observations:** 1,470 employees.
+
+```{r}
+#| label: data-and-packages
+
+library(tidyverse)
+library(tidymodels)
+library(modeldata)
+library(skimr)
+library(themis)
+
+data(attrition, package = "modeldata")
+
+glimpse(attrition)
+
+attrition %>%
+  summarise(
+    n = n(),
+    n_vars = ncol(.),
+    duplicated_rows = sum(duplicated(.)),
+    missing_cells = sum(is.na(.))
+  )
+
+attrition %>%
+  summarise(across(everything(), ~ sum(is.na(.)))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "n_na") %>%
+  arrange(desc(n_na)) %>%
+  filter(n_na > 0)
+```
+
+## 2. Exploratory Data Analysis
+
+The initial dataset contains **1,470 observations and 31 variables**, with no duplicated rows or missing values.
+
+The target variable is strongly imbalanced: approximately **83.9%** of employees belong to the `No` class and **16.1%** to the `Yes` class. This motivates the use of resampling techniques during model training.
+
+```{r}
+#| label: eda
+
+skimr::skim(attrition)
+
+attrition %>%
+  count(Attrition) %>%
+  mutate(prop = n / sum(n))
+
+attrition %>%
+  count(Attrition) %>%
+  ggplot(aes(x = Attrition, y = n)) +
+  geom_col() +
+  labs(
+    title = "Attrition Target Distribution",
+    x = "Attrition",
+    y = "Number of Employees"
+  )
+
+vars_num_demo <- c("Age", "MonthlyIncome", "YearsAtCompany")
+
+attrition %>%
+  select(Attrition, all_of(vars_num_demo)) %>%
+  pivot_longer(-Attrition, names_to = "variable", values_to = "value") %>%
+  ggplot(aes(x = Attrition, y = value)) +
+  geom_boxplot(outlier.alpha = 0.3) +
+  facet_wrap(~ variable, scales = "free_y") +
+  labs(
+    title = "Numerical Predictors vs Attrition",
+    x = "Attrition",
+    y = "Value"
+  )
+
+attrition %>%
+  count(Department, Attrition) %>%
+  ggplot(aes(x = Department, y = n, fill = Attrition)) +
+  geom_col(position = "fill") +
+  labs(
+    title = "Attrition by Department",
+    x = "Department",
+    y = "Proportion"
+  ) +
+  coord_flip()
+```
+
+The exploratory analysis suggests that several numerical and categorical variables differ between employees who leave and those who stay, indicating potentially useful predictive signal.
+
+## 3. Train/Test Split
+
+A fixed random seed is used to ensure reproducibility. Since employee attrition (`Yes`) is the event of interest, the target factor is explicitly releveled so that `Yes` becomes the first level.
+
+The dataset is then divided into **70% training** and **30% test** sets using stratification by `Attrition`, preserving the original class prevalence.
+
+```{r}
+#| label: split
+
+set.seed(123456)
+
+attrition <- attrition %>%
+  mutate(Attrition = relevel(Attrition, ref = "Yes"))
+
+levels(attrition$Attrition)
+
+split_attrition <- initial_split(
+  attrition,
+  prop = 0.7,
+  strata = Attrition
+)
+
+train_data <- training(split_attrition)
+test_data <- testing(split_attrition)
+
+bind_rows(
+  attrition %>% mutate(dataset = "Original"),
+  train_data %>% mutate(dataset = "Train"),
+  test_data %>% mutate(dataset = "Test")
+) %>%
+  count(dataset, Attrition) %>%
+  group_by(dataset) %>%
+  mutate(prop = n / sum(n))
+```
+
+The prevalence of `Attrition = Yes` remains practically constant across the original, training and test sets, confirming that stratification was applied correctly.
+
+## 4. Feature Engineering and Class Balancing
+
+A `tidymodels` recipe is built using the training data only in order to avoid information leakage.
+
+The preprocessing pipeline includes:
+
+1. Removal of zero- and near-zero-variance predictors.
+2. Median imputation for numeric predictors if missing values are present.
+3. Grouping of rare categorical levels below 1% frequency.
+4. Dummy encoding of nominal predictors.
+5. A second near-zero-variance filter after dummy creation.
+6. Standardization of numeric predictors.
+7. Removal of highly correlated numeric predictors using an absolute correlation threshold of 0.9.
+8. SMOTE oversampling of the minority class during training.
+
+```{r}
+#| label: preprocessing-recipe
+
+recipe_attrition <- recipe(Attrition ~ ., data = train_data) %>%
+  step_nzv(all_predictors()) %>%
+  step_impute_median(all_numeric_predictors()) %>%
+  step_other(all_nominal_predictors(), threshold = 0.01) %>%
+  step_dummy(all_nominal_predictors(), one_hot = FALSE) %>%
+  step_nzv(all_predictors()) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.9) %>%
+  themis::step_smote(Attrition, over_ratio = 0.6)
+
+recipe_attrition
+
+prep_recipe <- prep(recipe_attrition)
+juice(prep_recipe) %>%
+  count(Attrition)
+```
+
+SMOTE is applied only during model training, preventing synthetic observations from leaking into the held-out test set.
+
+## 5. k-Nearest Neighbors Classification
+
+The first classifier is a **k-Nearest Neighbors (kNN)** model. The number of neighbors, `k`, is treated as a hyperparameter and optimized using **10-fold stratified cross-validation**.
+
+ROC AUC is used as the primary tuning metric because the target is imbalanced and ranking ability is important for identifying employees at risk.
+
+```{r}
+#| label: knn
+
+knn_spec <- nearest_neighbor(
+  neighbors = tune(),
+  weight_func = "rectangular",
+  dist_power = 2
+) %>%
+  set_engine("kknn") %>%
+  set_mode("classification")
+
+knn_wf <- workflow() %>%
+  add_recipe(recipe_attrition) %>%
+  add_model(knn_spec)
+
+set.seed(123456)
+folds <- vfold_cv(train_data, v = 10, strata = Attrition)
+
+k_grid <- tibble(
+  neighbors = unique(round(seq(3, 50, length.out = 10)))
+)
+
+knn_res <- tune_grid(
+  knn_wf,
+  resamples = folds,
+  grid = k_grid,
+  metrics = metric_set(roc_auc)
+)
+
+knn_res %>%
+  collect_metrics() %>%
+  arrange(desc(mean))
+
+best_k <- select_best(knn_res, metric = "roc_auc")
+best_k
+
+knn_final_wf <- finalize_workflow(knn_wf, best_k)
+knn_fit <- fit(knn_final_wf, data = train_data)
+
+knn_test_pred <- predict(knn_fit, new_data = test_data, type = "prob") %>%
+  bind_cols(predict(knn_fit, new_data = test_data, type = "class")) %>%
+  bind_cols(test_data %>% select(Attrition))
+
+knn_test_pred %>%
+  conf_mat(truth = Attrition, estimate = .pred_class)
+
+knn_metric_set <- metric_set(accuracy, sens, spec)
+
+knn_metric_set(
+  knn_test_pred,
+  truth = Attrition,
+  estimate = .pred_class
+)
+
+knn_test_pred %>%
+  roc_curve(truth = Attrition, .pred_Yes) %>%
+  autoplot()
+```
+
+### 5.1 kNN Results
+
+The best value found in the explored grid is **k = 50**, with a mean cross-validated ROC AUC of approximately **0.77**.
+
+On the test set, the model achieves approximately **64.7% accuracy** and identifies **51 employees who actually leave**, although this comes at the cost of a relatively high number of false positives.
+
+This behavior is consistent with a retention-oriented People Analytics use case: the model favors identifying employees at risk, even if doing so generates additional false alarms.
+
+Because the selected value lies at the upper boundary of the tested grid, a wider search range for `k` would be a reasonable next experiment.
+
+## 6. Polynomial SVM Classification
+
+The second classifier is a non-linear **Support Vector Machine with a polynomial kernel**.
+
+The model uses fixed hyperparameters:
+
+- `cost = 1`
+- `degree = 2`
+- `scale_factor = 1`
+
+It is trained using the same preprocessing recipe as the kNN model, ensuring a fair comparison.
+
+```{r}
+#| label: svm
+
+svm_spec <- svm_poly(
+  cost = 1,
+  degree = 2,
+  scale_factor = 1
+) %>%
+  set_engine("kernlab") %>%
+  set_mode("classification")
+
+svm_wf <- workflow() %>%
+  add_recipe(recipe_attrition) %>%
+  add_model(svm_spec)
+
+svm_fit <- fit(svm_wf, data = train_data)
+
+svm_test_pred <- predict(svm_fit, new_data = test_data, type = "class") %>%
+  bind_cols(test_data %>% select(Attrition))
+
+svm_metric_set <- metric_set(accuracy, sens, spec)
+
+svm_metric_set(
+  svm_test_pred,
+  truth = Attrition,
+  estimate = .pred_class
+)
+
+svm_test_pred %>%
+  conf_mat(truth = Attrition, estimate = .pred_class)
+```
+
+### 6.1 SVM Results
+
+The polynomial SVM achieves approximately **81.7% accuracy** on the test set.
+
+Its confusion matrix contains approximately:
+
+- True positives: 27
+- False positives: 36
+- False negatives: 45
+- True negatives: 334
+
+The model therefore has high specificity but relatively low sensitivity for `Attrition = Yes`. It is conservative: it produces fewer false alarms, but it fails to detect many real employee departures.
+
+## 7. Model Comparison
+
+The two models exhibit very different classification behavior.
+
+```{r}
+#| label: model-comparison
+
+knn_metrics <- knn_metric_set(
+  knn_test_pred,
+  truth = Attrition,
+  estimate = .pred_class
+) %>%
+  mutate(model = "kNN")
+
+svm_metrics <- svm_metric_set(
+  svm_test_pred,
+  truth = Attrition,
+  estimate = .pred_class
+) %>%
+  mutate(model = "SVM")
+
+bind_rows(knn_metrics, svm_metrics) %>%
+  select(model, .metric, .estimate) %>%
+  arrange(.metric, desc(.estimate))
+```
+
+The SVM obtains substantially higher overall accuracy because it performs very well on the majority `No` class. However, the business objective of this problem is to identify employees at risk of leaving, making **sensitivity for the `Yes` class** particularly important.
+
+The kNN model detects considerably more real attrition cases, while the SVM sacrifices sensitivity in exchange for higher specificity and fewer false positives.
+
+This illustrates why model selection in an imbalanced business problem should not rely on accuracy alone. The preferred model depends on the operational cost of false negatives versus false positives.
+
+## 8. Conclusions
+
+This project demonstrates an end-to-end classification workflow for employee attrition using the `tidymodels` ecosystem in R.
+
+The main findings are:
+
+- The attrition target is strongly imbalanced, making class-aware evaluation essential.
+- A reusable preprocessing recipe can combine data cleaning, categorical encoding, scaling, correlation filtering and SMOTE without leaking information into the test set.
+- kNN tuning with cross-validation produces a model with stronger sensitivity toward employees who leave.
+- The polynomial SVM achieves substantially higher overall accuracy and specificity, but misses more real attrition cases.
+- Accuracy alone is insufficient for selecting a model in this People Analytics context.
+- The final model choice should reflect the business cost of missed departures versus unnecessary retention interventions.
+
+Overall, the project highlights the importance of aligning model evaluation metrics with the real objective of the prediction task rather than optimizing a single aggregate metric.
