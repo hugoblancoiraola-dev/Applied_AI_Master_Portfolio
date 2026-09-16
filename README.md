@@ -57,6 +57,18 @@ The final CNN achieves approximately **67.8% test accuracy**, while the LSTM dem
 
 ➡️ [Explore the project](./deep-learning/keras-neural-networks/)
 
+### 📝 NLP Text Analysis Pipeline
+
+Natural Language Processing pipeline for Spanish text combining **extractive summarization**, **sentiment analysis** and **Spanish-to-English machine translation**.
+
+The project combines a transparent frequency-based summarization method with pretrained Hugging Face Transformer models, including multilingual BERT for sentiment analysis and MarianMT for machine translation.
+
+It also discusses practical limitations such as sentiment-model domain mismatch, loss of nuance in document-level polarity and long-text segmentation for Transformer inference.
+
+**Technologies:** `Python` · `Hugging Face Transformers` · `BERT` · `MarianMT` · `PyTorch` · `NumPy`
+
+➡️ [Explore the project](./natural-language-processing/text-analysis-pipeline/)
+
 ---
 
 ## 📚 Projects by Area
@@ -80,6 +92,12 @@ Statistical foundations and mathematical techniques applied to Artificial Intell
 | Project | Main Topics |
 |---|---|
 | [Deep Learning with Keras: LSTM & CNN](./deep-learning/keras-neural-networks/) | LSTM · Time Series Forecasting · CNN · CIFAR-10 · Data Augmentation · Regularization |
+
+### 📝 Natural Language Processing
+
+| Project | Main Topics |
+|---|---|
+| [NLP Text Analysis Pipeline](./natural-language-processing/text-analysis-pipeline/) | Extractive Summarization · Sentiment Analysis · Machine Translation · Transformers · BERT · MarianMT |
 
 ---
 
@@ -114,7 +132,11 @@ Throughout the portfolio, the projects cover topics including:
 
 **Deep Learning**
 
-`TensorFlow` · `Keras`
+`TensorFlow` · `Keras` · `PyTorch`
+
+**Natural Language Processing**
+
+`Hugging Face Transformers` · `BERT` · `MarianMT`
 
 **Visualization & Explainability**
 
@@ -149,11 +171,17 @@ Applied_AI_Master_Portfolio/
 │       └── report/
 │           └── credit_default_analysis.pdf
 │
-└── deep-learning/
-    └── keras-neural-networks/
+├── deep-learning/
+│   └── keras-neural-networks/
+│       ├── README.md
+│       └── notebooks/
+│           └── keras_lstm_cnn.ipynb
+│
+└── natural-language-processing/
+    └── text-analysis-pipeline/
         ├── README.md
         └── notebooks/
-            └── keras_lstm_cnn.ipynb
+            └── nlp_text_analysis.ipynb
 ```
 
 Each project contains its own documentation explaining the **problem, methodology, models, results and conclusions**, together with the corresponding implementation and, when available, the original technical report.
@@ -177,5 +205,6 @@ This portfolio is being progressively expanded with selected projects from the M
 - ✅ ECG Arrhythmia Detection with Machine Learning
 - ✅ Credit Default Prediction & Explainable AI
 - ✅ Deep Learning with Keras: LSTM & CNN
+- ✅ NLP Text Analysis Pipeline
 
-Additional projects covering NLP, Computer Vision, clustering and other AI areas will be added progressively.
+Additional projects covering clustering, advanced Computer Vision and other AI areas will be added progressively.
